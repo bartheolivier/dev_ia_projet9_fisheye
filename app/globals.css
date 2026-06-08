@@ -1,49 +1,133 @@
+/* app/globals.css */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap');
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-html {
-  height: 100%;
-}
-
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
-}
-
-body {
-  min-height: 100%;
-  display: flex;
-  flex-direction: column;
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  --primary-color: #901C1C; /* Rouge foncé du logo */
+  --secondary-color: #D3573C; /* Rouge clair/orange des textes */
+  --text-dark: #000000;
+  --text-light: #525252;
+  --bg-color: #FAFAFA;
 }
 
 * {
   box-sizing: border-box;
-  padding: 0;
   margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background-color: var(--bg-color);
+  padding: 50px 100px;
+  max-width: 1440px; /* Empêche le site de s'étirer indéfiniment */
+  margin: 0 auto;    /* Centre la zone de 1440px au milieu de l'écran */
 }
 
 a {
-  color: inherit;
   text-decoration: none;
+  color: inherit;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
+/* --- HEADER --- */
+.header {
+  display: flex;
+  justify-content: space-between; /* Pousse le logo à gauche et le titre à droite */
+  align-items: center;
+  margin-bottom: 50px;
+}
+
+.logo {
+  height: 50px;
+}
+
+.header-title {
+  color: var(--primary-color);
+  font-size: 36px; /* la valeur exacte de Figma */
+  font-weight: 400; /* l'épaisseur de Figma */
+  margin: 0;
+}
+
+/* --- GRILLE DES PHOTOGRAPHES --- */
+.photographers-grid {
+  display: grid;
+  /* On force 3 colonnes strictement égales (1 fraction chacune) */
+  grid-template-columns: 1fr 1fr 1fr; 
+  row-gap: 50px; 
+}
+
+/* On cible le 1er élément de chaque ligne de 3 (Mimi, Nabeel...) */
+.photographer-card:nth-child(3n + 1) {
+  justify-self: flex-start; /* Se plaque contre le bord gauche */
+}
+
+/* On cible le 2ème élément de chaque ligne de 3 (Ellie-Rose, Rhode...) */
+.photographer-card:nth-child(3n + 2) {
+  justify-self: center; /* Reste au milieu de sa colonne */
+}
+
+/* On cible le 3ème élément de chaque ligne de 3 (Tracy, Marcel...) */
+.photographer-card:nth-child(3n) {
+  justify-self: flex-end; /* Se plaque contre le bord droit */
+}
+
+/* --- CARTE PHOTOGRAPHE --- */
+.photographer-card {
+  width: 200px; /* 1. On force la boîte à faire la taille exacte du cercle */
+  display: flex;
+  flex-direction: column;
+  align-items: center; 
+  text-align: center;
+}
+
+.photographer-card a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%; /* 2. Le lien respecte cette contrainte de 200px */
+}
+
+/* 3. On demande au texte de prendre la place dont il a besoin, 
+      même si ça dépasse les 200px de la boîte */
+.name, .info p {
+  width: max-content; 
+}
+
+.img-container {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  overflow: hidden; /* Rend l'image parfaitement ronde */
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+  margin-bottom: 15px;
+}
+
+.portrait {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Assure que l'image remplit le cercle sans se déformer */
+}
+
+.name {
+  color: var(--secondary-color);
+  font-size: 36px;
+  font-weight: 400;
+  margin-bottom: 5px;
+}
+
+.info .location {
+  color: var(--primary-color);
+  font-size: 13px;
+  font-weight: 400;
+  margin-bottom: 5px;
+}
+
+.info .tagline {
+  color: var(--text-dark);
+  font-size: 10px;
+  margin-bottom: 5px;
+}
+
+.info .price {
+  color: var(--text-light);
+  font-size: 9px;
 }
