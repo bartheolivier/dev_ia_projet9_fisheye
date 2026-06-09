@@ -3,7 +3,6 @@ import Link from 'next/link';
 
 export default function PhotographerCard({ photographer }) {
   // Construction du chemin de l'image. 
-  // À adapter selon l'emplacement exact de tes images dans ton dossier public.
   const imagePath = `/assets/photographers/ID/${photographer.portrait}`;
 
   return (
