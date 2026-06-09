@@ -29,7 +29,8 @@ export default async function Home() {
 
   return (
     <main>
-      <Header />
+      {/* On informe le composant qu'il est bien sur la page d'accueil */}
+      <Header isHomePage={true} />
       {/* La section contenant la grille de nos photographes */}
       <section className="photographers-grid">
         {photographers.map((photographer) => (

@@ -13,7 +13,7 @@ export default function PhotographerCard({ photographer }) {
         <div className="img-container">
           <img 
             src={imagePath} 
-            alt={`Portrait de ${photographer.name}`} 
+            alt="" /* <-- Modifié ici selon les règles d'accessibilité */
             className="portrait"
           />
         </div>

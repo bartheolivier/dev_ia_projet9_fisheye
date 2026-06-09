@@ -131,3 +131,143 @@ a {
   color: var(--text-light);
   font-size: 9px;
 }
+
+/* --- PAGE PHOTOGRAPHE : EN-TÊTE --- */
+.photographer-header {
+  background-color: #FAFAFA; /* Le fond gris de la maquette */
+  display: flex;
+  justify-content: space-between; /* Espace les 3 éléments (Info, Bouton, Photo) */
+  align-items: center;
+  padding: 50px;
+  border-radius: 5px; /* Bords légèrement arrondis */
+  margin-bottom: 50px;
+}
+
+.photographer-info {
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Espace proprement les textes */
+}
+
+.photographer-info .name {
+  color: var(--secondary-color);
+  font-size: 3rem; 
+  margin: 0;
+}
+
+.photographer-info .location {
+  color: var(--primary-color);
+  font-size: 1.5rem;
+}
+
+.photographer-info .tagline {
+  color: var(--text-light);
+  font-size: 1.1rem;
+}
+
+.portrait-container {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%; /* La magie du cercle parfait */
+  overflow: hidden; /* Coupe tout ce qui dépasse du cercle */
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2); /* La même ombre que sur l'accueil */
+}
+
+/* --- ENCART FLOTTANT LIKES ET PRIX --- */
+.sticky-stats {
+  position: fixed; /* Fixe l'élément par rapport à la fenêtre du navigateur */
+  bottom: 0;
+  right: 5%; /* Aligné avec la marge de notre page */
+  background-color: var(--secondary-color);
+  color: black;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 300px;
+  padding: 20px 30px;
+  font-size: 1.2rem;
+  font-weight: 500;
+  border-radius: 5px 5px 0 0; /* Arrondit seulement les coins supérieurs */
+}
+
+.total-likes {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+
+/* --- BOUTON CONTACT --- */
+.contact-button {
+  background-color: var(--primary-color);
+  color: white;
+  font-size: 1.2rem;
+  font-weight: 700;
+  padding: 20px 30px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.contact-button:hover {
+  background-color: var(--secondary-color);
+}
+
+/* --- GALERIE MEDIAS --- */
+.media-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 colonnes égales */
+  gap: 30px; /* Espace entre les images */
+  margin-bottom: 100px; /* Laisse de la place avant le bas de la page */
+}
+
+.media-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.media-link {
+  width: 100%;
+  height: 300px; /* Hauteur fixe pour uniformiser toutes les photos */
+  margin-bottom: 10px;
+  border-radius: 5px;
+  overflow: hidden;
+  display: block;
+}
+
+.media-thumbnail {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Recadre l'image sans l'écraser */
+  transition: transform 0.3s ease; /* Petit bonus : animation fluide */
+}
+
+/* Léger zoom au survol pour montrer que c'est cliquable */
+.media-thumbnail:hover {
+  transform: scale(1.05); 
+}
+
+.media-info {
+  display: flex;
+  justify-content: space-between; /* Titre à gauche, Likes à droite */
+  align-items: center;
+  color: var(--primary-color);
+}
+
+.media-title {
+  font-size: 1.2rem;
+  font-weight: 400;
+  margin: 0;
+}
+
+.media-likes {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+.heart-icon {
+  cursor: pointer;
+}
