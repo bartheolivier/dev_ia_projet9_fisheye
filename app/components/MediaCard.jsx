@@ -1,7 +1,7 @@
 // app/components/MediaCard.jsx
 import Image from 'next/image';
 
-export default function MediaCard({ media, photographerName }) {
+export default function MediaCard({ media, photographerName, onSelect }) {
   
   // 1. On récupère le nom exact du fichier (image ou vidéo) depuis la base de données
   const mediaFileName = media.image || media.video;
@@ -11,21 +11,25 @@ export default function MediaCard({ media, photographerName }) {
 
   return (
     <article className="media-card">
-       {/* ... Le reste du code (le JSX) ne change absolument pas ! ... */}
-      {/* Annotation 9 : Le lien vers la Lightbox (qui ne fait rien pour l'instant)
+      {/* Au clic, on bloque le lien '#' et on déclenche la sélection */}
+      {/* Annotation 9 : Le lien vers la Lightbox
         Nom accessible demandé : "[Titre], closeup view"
       */}
       <a 
         href="#" 
         aria-label={`${media.title}, closeup view`} 
         className="media-link"
+        onClick={(e) => {
+          e.preventDefault();
+          onSelect();
+        }}
       >
         {media.image ? (
           <Image 
             src={mediaPath} 
             alt={media.title} 
-            width={350} 
-            height={300} 
+            fill /* <-- Remplace width et height par fill */
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" /* <-- Ajouté ici */
             className="media-thumbnail"
           />
         ) : (

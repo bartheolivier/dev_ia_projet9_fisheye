@@ -2,7 +2,8 @@
 import { getPhotographer, getAllMediasForPhotographer } from '../../lib/prisma-db';
 import Header from '../../components/Header';
 import Image from 'next/image'; // Importation du composant Image optimisé
-import MediaCard from '../../components/MediaCard';
+import MediaGallery from '../../components/MediaGallery';
+import ContactWidget from '../../components/ContactWidget';
 
 export default async function PhotographerPage({ params }) {
   // 1. On récupère l'ID envoyé dans l'URL
@@ -36,32 +37,21 @@ export default async function PhotographerPage({ params }) {
           <p className="tagline">{photographer.tagline}</p>
         </div>
         
-        {/* Ajout du aria-label "Contact Me" demandé dans l'annotation 4 */}
-        <button className="contact-button" aria-label="Contact Me">
-          Contactez-moi
-        </button>
+        <ContactWidget photographerName={photographer.name} />
         
         <div className="portrait-container">
           <Image 
             src={portraitPath} 
             alt={photographer.name} /* Annotation 5 : Nom du photographe */
-            width={200} 
-            height={200} 
+            fill /* <-- Remplace width et height par fill */
+            sizes="200px" /* <-- Ajouté ici */
             className="portrait"
           />
         </div>
       </section>
 
-      {/* La grille de médias */}
-      <section className="media-grid">
-        {medias.map((media) => (
-          <MediaCard 
-            key={media.id} 
-            media={media} 
-            photographerName={photographer.name} 
-          />
-        ))}
-      </section>
+      {/* La grille de médias dynamique et sa Lightbox intégrée */}
+      <MediaGallery medias={medias} photographerName={photographer.name} />
 
       {/* L'encart flottant en bas à droite */}
       <aside className="sticky-stats">

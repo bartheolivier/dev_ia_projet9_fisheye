@@ -1,5 +1,6 @@
 // app/components/PhotographerCard.jsx
 import Link from 'next/link';
+import Image from 'next/image'; // 1. Importation du composant optimisé
 
 export default function PhotographerCard({ photographer }) {
   // Construction du chemin de l'image. 
@@ -10,9 +11,12 @@ export default function PhotographerCard({ photographer }) {
       {/* Le lien englobe l'image et le nom pour rendre toute la zone cliquable */}
       <Link href={`/photographer/${photographer.id}`} aria-label={photographer.name}>
         <div className="img-container">
-          <img 
+          {/* 2. Remplacement par le composant Image avec fill et sizes */}
+          <Image 
             src={imagePath} 
-            alt="" /* <-- Modifié ici selon les règles d'accessibilité */
+            alt="" 
+            fill
+            sizes="200px"
             className="portrait"
           />
         </div>
