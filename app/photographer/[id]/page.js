@@ -22,9 +22,6 @@ export default async function PhotographerPage({ params }) {
   // 3. Construction du chemin de la photo de profil
   const portraitPath = `/assets/photographers/ID/${photographer.portrait}`;
 
-  // Calcul du total des likes en additionnant les likes de chaque média
-  const totalLikes = medias.reduce((acc, currentMedia) => acc + currentMedia.likes, 0);
-
   return (
     <main>
       <Header />
@@ -51,16 +48,12 @@ export default async function PhotographerPage({ params }) {
       </section>
 
       {/* La grille de médias dynamique et sa Lightbox intégrée */}
-      <MediaGallery medias={medias} photographerName={photographer.name} />
-
-      {/* L'encart flottant en bas à droite */}
-      <aside className="sticky-stats">
-        <div className="total-likes">
-          {totalLikes} 
-          <span className="heart-icon" aria-label="likes">♥</span> {/* Annotation 11 */}
-        </div>
-        <span>{photographer.price}€ / jour</span>
-      </aside>
+      {/* La galerie gère désormais l'intégralité des interactions et des statistiques */}
+      <MediaGallery 
+        medias={medias} 
+        photographerName={photographer.name} 
+        photographerPrice={photographer.price} 
+      />
       
     </main>
   );
