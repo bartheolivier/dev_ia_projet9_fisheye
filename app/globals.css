@@ -17,6 +17,31 @@
   padding: 0;
 }
 
+/* Utilitaires d'accessibilité pro */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Amélioration visuelle de la navigation au clavier (Touche Tab) */
+.media-link:focus-visible,
+.photographer-card a:focus-visible,
+.sort-select:focus-visible,
+.contact-button:focus-visible,
+.lightbox-arrow:focus-visible,
+.lightbox-close:focus-visible {
+  outline: 3px solid var(--primary-color);
+  outline-offset: 4px;
+  border-radius: 5px;
+}
+
 body {
   font-family: 'DM Sans', sans-serif;
   background-color: var(--bg-color);
@@ -223,7 +248,7 @@ a {
 /* --- GALERIE MEDIAS (GRILLE CORPS DE PAGE) --- */
 .media-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr); /* Grille sémantique à 3 colonnes fluides */
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 30px;
   margin-bottom: 100px;
 }
@@ -236,7 +261,12 @@ a {
 .media-link {
   position: relative; /* Indispensable pour stabiliser la balise <Image fill /> */
   width: 100%;
-  height: 300px;      /* Fixe la hauteur pour harmoniser parfaitement la grille, peu importe le ratio d'origine */
+  
+  /* 🌟 CORRECTION PRO : On supprime la hauteur fixe de 300px et on impose un ratio carré (1/1).
+     La boîte devient plus haute, ce qui "dezoome" automatiquement le recadrage de l'oiseau
+     sans laisser de bandes vides sur les côtés ! */
+  aspect-ratio: 1 / 1; 
+  
   margin-bottom: 10px;
   border-radius: 5px;
   overflow: hidden;
@@ -245,8 +275,9 @@ a {
 
 .media-thumbnail {
   width: 100%;
-  height: 100%;
+  height: 100%; 
   object-fit: cover;
+  object-position: center;
   transition: transform 0.3s ease; /* Animation fluide pour le confort visuel */
 }
 
@@ -468,7 +499,8 @@ a {
 .lightbox-asset {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+/* 🌟 CORRECTION : Force le média à s'afficher en entier sans aucune coupure dans le carrousel */
+  object-fit: contain;
 }
 
 .lightbox-title {
