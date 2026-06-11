@@ -17,6 +17,7 @@ export default function PhotographerCard({ photographer }) {
             alt="" 
             fill
             sizes="200px"
+            priority
             className="portrait"
           />
         </div>

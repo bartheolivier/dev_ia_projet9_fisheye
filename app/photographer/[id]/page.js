@@ -42,6 +42,7 @@ export default async function PhotographerPage({ params }) {
             alt={photographer.name} /* Annotation 5 : Nom du photographe */
             fill /* <-- Remplace width et height par fill */
             sizes="200px" /* <-- Ajouté ici */
+            priority
             className="portrait"
           />
         </div>

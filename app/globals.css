@@ -460,3 +460,51 @@ a {
   display: inline-block;
   transition: transform 0.2s ease;
 }
+
+/* --- ZONE DE TRI --- */
+.sort-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 40px;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.sort-label {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #000000;
+}
+
+.sort-select {
+  background-color: var(--primary-color);
+  color: #FFFFFF;
+  font-size: 1.1rem;
+  font-weight: 500;
+  padding: 15px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 170px;
+  outline: none;
+  
+  /* Masquage de la flèche native pour un rendu cross-browser propre */
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  
+  /* Ajout d'une flèche personnalisée en SVG blanc */
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'><path d='M1 3l4 4 4-4' stroke='white' stroke-width='2' fill='none' stroke-linecap='round'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 20px center;
+  padding-right: 40px;
+}
+
+.sort-select:focus {
+  box-shadow: 0 0 0 3px rgba(144, 28, 28, 0.4); /* Focus visible pour le clavier */
+}
+
+.sort-select option {
+  background-color: var(--primary-color);
+  color: #FFFFFF;
+}
