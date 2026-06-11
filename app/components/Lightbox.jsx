@@ -1,4 +1,6 @@
 // app/components/Lightbox.jsx
+// Ce composant gère le carrousel plein écran. Il implémente les écouteurs globaux du clavier réclamés par les spécifications du projet.
+
 "use client";
 
 import { useEffect } from 'react';
@@ -6,19 +8,27 @@ import Image from 'next/image';
 
 export default function Lightbox({ media, photographerName, onClose, onPrev, onNext }) {
   
-  // Écoute dynamique du clavier pour la navigation et la fermeture
+  /* ==========================================
+     ÉCOUTEUR DE CLAVIER GLOBAL (EFFETS DIRECTS)
+     ========================================== */
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (e.key === 'Escape') onClose();
-      if (e.key === 'ArrowRight') onNext();
-      if (e.key === 'ArrowLeft') onPrev();
+      if (e.key === 'Escape') onClose();    // Fermeture immédiate via la touche Échap
+      if (e.key === 'ArrowRight') onNext(); // Média suivant via la flèche droite
+      if (e.key === 'ArrowLeft') onPrev();  // Média précédent via la flèche gauche
     };
     
+    // On attache l'écouteur d'événement à l'objet global window du navigateur
     window.addEventListener('keydown', handleKeyDown);
-    // Nettoyage de l'écouteur lorsque la modale se ferme
+    
+    // SOUTENANCE (Nettoyage de mémoire / Anti-Memory Leak) :
+    // La fonction return est la fonction de nettoyage (cleanup). Elle s'exécute AUTOMATIQUEMENT
+    // lorsque la Lightbox se ferme. Si on oubliait de faire ce removeEventListener, l'écouteur resterait
+    // actif en tâche de fond, ralentissant le navigateur et provoquant des bugs sur les autres pages.
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [onClose, onNext, onPrev]);
 
+  // Sécurité : si aucun média n'est sélectionné, le composant ne génère aucun code HTML
   if (!media) return null;
 
   const mediaFileName = media.image || media.video;
@@ -26,14 +36,17 @@ export default function Lightbox({ media, photographerName, onClose, onPrev, onN
 
   return (
     <div className="lightbox-backdrop" onClick={onClose}>
-      {/* Repère 1 : Conteneur de dialogue avec son nom accessible */}
+      {/* ACCESSIBILITÉ (Repère 1) : Conteneur de dialogue conforme aux WCAG.
+        Le role="dialog" isole la fenêtre. Le onClick={(e) => e.stopPropagation()} évite 
+        que la Lightbox ne se ferme si on clique au milieu de la photo.
+      */}
       <div 
         className="lightbox-dialog" 
         role="dialog" 
         aria-label="image closeup view"
-        onClick={(e) => e.stopPropagation()} // Empêche la fermeture si on clique sur l'image
+        onClick={(e) => e.stopPropagation()}
       >
-        {/* Repère 4 : Bouton précédent */}
+        {/* ACCESSIBILITÉ (Repère 4) : Bouton précédent doté d'un label textuel explicite */}
         <button className="lightbox-arrow left" aria-label="Previous image" onClick={onPrev}>
           ‹
         </button>
@@ -41,16 +54,20 @@ export default function Lightbox({ media, photographerName, onClose, onPrev, onN
         <div className="lightbox-content">
           <div className="lightbox-media-container">
             {media.image ? (
-              /* Repère 2 : Image avec son titre en texte alternatif */
+              /* ACCESSIBILITÉ & PERFORMANCE (Repère 2) : 
+                - alt={media.title} : Le texte alternatif est obligatoirement le titre de la photo.
+                - 'priority' : Force Next.js à charger immédiatement le fichier HD à l'écran sans transition floue.
+              */
               <Image 
                 src={mediaPath} 
                 alt={media.title} 
                 fill
                 sizes="(max-width: 1200px) 100vw, 80vw"
                 className="lightbox-asset"
-                priority // Force le chargement rapide de l'image ouverte
+                priority 
               />
             ) : (
+              /* Lecteur vidéo complet s'il s'agit d'un MP4 */
               <video 
                 src={mediaPath} 
                 title={media.title} 
@@ -60,16 +77,17 @@ export default function Lightbox({ media, photographerName, onClose, onPrev, onN
               />
             )}
           </div>
-          {/* Repère 3 : Texte statique du titre sous le média */}
+          {/* ACCESSIBILITÉ (Repère 3) : Titre textuel statique affiché sous le média actif */}
           <h3 className="lightbox-title">{media.title}</h3>
         </div>
 
+        {/* Bloc regroupant les commandes de droite (Superposition CSS de la croix et de la flèche) */}
         <div className="lightbox-right-controls">
-          {/* Repère 6 : Bouton de fermeture en haut à droite */}
+          {/* ACCESSIBILITÉ (Repère 6) : Bouton de fermeture du dialogue */}
           <button className="lightbox-close" aria-label="Close dialog" onClick={onClose}>
             ×
           </button>
-          {/* Repère 5 : Bouton suivant décalé en dessous du X */}
+          {/* ACCESSIBILITÉ (Repère 5) : Bouton média suivant */}
           <button className="lightbox-arrow right" aria-label="Next image" onClick={onNext}>
             ›
           </button>

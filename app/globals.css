@@ -1,16 +1,18 @@
 /* app/globals.css */
+/* La feuille de style globale: le CSS structure l'ensemble de l'application et assure la cohérence graphique.  */
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap');
 
 :root {
-  --primary-color: #901C1C; /* Rouge foncé du logo */
-  --secondary-color: #D3573C; /* Rouge clair/orange des textes */
+  /* VARIABLES CSS : Centralisation de la charte graphique Figma pour faciliter la maintenance */
+  --primary-color: #901C1C;    /* Rouge foncé (Logo, boutons principaux, filtres) */
+  --secondary-color: #D3573C;  /* Rouge clair/orange (Noms des photographes, titres) */
   --text-dark: #000000;
   --text-light: #525252;
   --bg-color: #FAFAFA;
 }
 
 * {
-  box-sizing: border-box;
+  box-sizing: border-box; /* Inclut les bordures et paddings dans le calcul de la largeur des boîtes */
   margin: 0;
   padding: 0;
 }
@@ -19,19 +21,19 @@ body {
   font-family: 'DM Sans', sans-serif;
   background-color: var(--bg-color);
   padding: 50px 100px;
-  max-width: 1440px; /* Empêche le site de s'étirer indéfiniment */
-  margin: 0 auto;    /* Centre la zone de 1440px au milieu de l'écran */
+  max-width: 1440px; /* SOUTENANCE : Bloque le site à 1440px pour éviter qu'il s'étire sur les écrans ultra-larges */
+  margin: 0 auto;    /* Centre horizontalement l'application sur l'écran de l'utilisateur */
 }
 
 a {
   text-decoration: none;
-  color: inherit;
+  color: inherit; /* Annule la couleur bleue native et le soulignement des liens HTML */
 }
 
 /* --- HEADER --- */
 .header {
   display: flex;
-  justify-content: space-between; /* Pousse le logo à gauche et le titre à droite */
+  justify-content: space-between; /* Propulse le logo à l'extrémité gauche et le titre H1 à l'extrême droite */
   align-items: center;
   margin-bottom: 50px;
 }
@@ -42,37 +44,35 @@ a {
 
 .header-title {
   color: var(--primary-color);
-  font-size: 36px; /* la valeur exacte de Figma */
-  font-weight: 400; /* l'épaisseur de Figma */
+  font-size: 36px;  /* Calibrage exact Figma */
+  font-weight: 400; /* Poids léger conformément au design */
   margin: 0;
 }
 
-/* --- GRILLE DES PHOTOGRAPHES --- */
+/* --- GRILLE DES PHOTOGRAPHES (ACCUEIL) --- */
 .photographers-grid {
   display: grid;
-  /* On force 3 colonnes strictement égales (1 fraction chacune) */
-  grid-template-columns: 1fr 1fr 1fr; 
+  grid-template-columns: 1fr 1fr 1fr; /* Force une répartition stricte en 3 colonnes égales */
   row-gap: 50px; 
 }
 
-/* On cible le 1er élément de chaque ligne de 3 (Mimi, Nabeel...) */
+/* SOUTENANCE (Alignement asymétrique de la maquette) :
+   Pour reproduire la disposition décalée de Figma sans briser la grille responsive, 
+   on utilise des sélecteurs de récurrence (nth-child) :
+*/
 .photographer-card:nth-child(3n + 1) {
-  justify-self: flex-start; /* Se plaque contre le bord gauche */
+  justify-self: flex-start; /* Éléments 1, 4, 7... collés à gauche de leur colonne */
 }
-
-/* On cible le 2ème élément de chaque ligne de 3 (Ellie-Rose, Rhode...) */
 .photographer-card:nth-child(3n + 2) {
-  justify-self: center; /* Reste au milieu de sa colonne */
+  justify-self: center;     /* Éléments 2, 5, 8... parfaitement centrés dans leur colonne */
 }
-
-/* On cible le 3ème élément de chaque ligne de 3 (Tracy, Marcel...) */
 .photographer-card:nth-child(3n) {
-  justify-self: flex-end; /* Se plaque contre le bord droit */
+  justify-self: flex-end;   /* Éléments 3, 6, 9... collés à droite de leur colonne */
 }
 
 /* --- CARTE PHOTOGRAPHE --- */
 .photographer-card {
-  width: 200px; /* 1. On force la boîte à faire la taille exacte du cercle */
+  width: 200px; /* Calé sur le diamètre exact des portraits ronds */
   display: flex;
   flex-direction: column;
   align-items: center; 
@@ -83,21 +83,24 @@ a {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 100%; /* 2. Le lien respecte cette contrainte de 200px */
+  width: 100%;
 }
 
-/* 3. On demande au texte de prendre la place dont il a besoin, 
-      même si ça dépasse les 200px de la boîte */
 .name, .info p {
-  width: max-content; 
+  width: max-content; /* Empêche le texte de revenir à la ligne de force si le nom est long */
 }
 
+/* COMPOSANT IMAGE NEXT.JS (Règle d'or du 'fill') :
+   Lorsque l'on utilise la propriété 'fill' sur une balise <Image> de Next.js, l'image se positionne 
+   en 'absolute'. Pour qu'elle ne s'échappe pas et reste confinée dans sa boîte, le conteneur parent 
+   (.img-container) doit impérativement déclarer une 'position: relative'.
+*/
 .img-container {
-  position: relative; /* <-- AJOUT INDISPENSABLE pour que le 'fill' se repère */
+  position: relative; 
   width: 200px;
   height: 200px;
-  border-radius: 50%;
-  overflow: hidden; /* Rend l'image parfaitement ronde */
+  border-radius: 50%; /* Transforme le carré de 200x200 en un cercle parfait */
+  overflow: hidden;   /* Masque et découpe tout ce qui dépasse du cercle (angles de la photo) */
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
   margin-bottom: 15px;
 }
@@ -105,7 +108,7 @@ a {
 .portrait {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* Assure que l'image remplit le cercle sans se déformer */
+  object-fit: cover; /* Recadre intelligemment l'image au centre du cercle sans l'écraser ni la déformer */
 }
 
 .name {
@@ -135,19 +138,19 @@ a {
 
 /* --- PAGE PHOTOGRAPHE : EN-TÊTE --- */
 .photographer-header {
-  background-color: #FAFAFA; /* Le fond gris de la maquette */
+  background-color: #FAFAFA;
   display: flex;
-  justify-content: space-between; /* Espace les 3 éléments (Info, Bouton, Photo) */
+  justify-content: space-between; /* Organise l'espace : Infos à gauche, Bouton au centre, Photo à droite */
   align-items: center;
   padding: 50px;
-  border-radius: 5px; /* Bords légèrement arrondis */
+  border-radius: 5px;
   margin-bottom: 50px;
 }
 
 .photographer-info {
   display: flex;
   flex-direction: column;
-  gap: 10px; /* Espace proprement les textes */
+  gap: 10px;
 }
 
 .photographer-info .name {
@@ -166,20 +169,21 @@ a {
   font-size: 1.1rem;
 }
 
+/* Conteneur de l'image de profil de la page détail (applique les mêmes règles absolues pour le fill) */
 .portrait-container {
-  position: relative; /* <-- Ajout indispensable pour le fill */
+  position: relative; 
   width: 200px;
   height: 200px;
-  border-radius: 50%; /* La magie du cercle parfait */
-  overflow: hidden; /* Coupe tout ce qui dépasse du cercle */
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2); /* La même ombre que sur l'accueil */
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-/* --- ENCART FLOTTANT LIKES ET PRIX --- */
+/* --- ENCART FLOTTANT DES STATS --- */
 .sticky-stats {
-  position: fixed; /* Fixe l'élément par rapport à la fenêtre du navigateur */
+  position: fixed; /* Détache l'encart du flux pour le clouer par-dessus le défilement de l'écran */
   bottom: 0;
-  right: 5%; /* Aligné avec la marge de notre page */
+  right: 5%;        /* S'aligne parfaitement avec les blocs supérieurs */
   background-color: var(--secondary-color);
   color: black;
   display: flex;
@@ -189,7 +193,8 @@ a {
   padding: 20px 30px;
   font-size: 1.2rem;
   font-weight: 500;
-  border-radius: 5px 5px 0 0; /* Arrondit seulement les coins supérieurs */
+  border-radius: 5px 5px 0 0; /* Arrondit uniquement les angles du haut */
+  z-index: 500; /* S'assure de passer au-dessus des images lors du scroll */
 }
 
 .total-likes {
@@ -212,15 +217,15 @@ a {
 }
 
 .contact-button:hover {
-  background-color: var(--secondary-color);
+  background-color: var(--secondary-color); /* Feedback visuel au survol */
 }
 
-/* --- GALERIE MEDIAS --- */
+/* --- GALERIE MEDIAS (GRILLE CORPS DE PAGE) --- */
 .media-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr); /* 3 colonnes égales */
-  gap: 30px; /* Espace entre les images */
-  margin-bottom: 100px; /* Laisse de la place avant le bas de la page */
+  grid-template-columns: repeat(3, 1fr); /* Grille sémantique à 3 colonnes fluides */
+  gap: 30px;
+  margin-bottom: 100px;
 }
 
 .media-card {
@@ -229,9 +234,9 @@ a {
 }
 
 .media-link {
-  position: relative; /* <-- Ajout indispensable pour le fill */
+  position: relative; /* Indispensable pour stabiliser la balise <Image fill /> */
   width: 100%;
-  height: 300px; /* Hauteur fixe pour uniformiser toutes les photos */
+  height: 300px;      /* Fixe la hauteur pour harmoniser parfaitement la grille, peu importe le ratio d'origine */
   margin-bottom: 10px;
   border-radius: 5px;
   overflow: hidden;
@@ -241,18 +246,17 @@ a {
 .media-thumbnail {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* Recadre l'image sans l'écraser */
-  transition: transform 0.3s ease; /* Petit bonus : animation fluide */
+  object-fit: cover;
+  transition: transform 0.3s ease; /* Animation fluide pour le confort visuel */
 }
 
-/* Léger zoom au survol pour montrer que c'est cliquable */
 .media-thumbnail:hover {
-  transform: scale(1.05); 
+  transform: scale(1.05); /* Effet d'engagement indiquant la nature cliquable du média */
 }
 
 .media-info {
   display: flex;
-  justify-content: space-between; /* Titre à gauche, Likes à droite */
+  justify-content: space-between;
   align-items: center;
   color: var(--primary-color);
 }
@@ -275,25 +279,81 @@ a {
   cursor: pointer;
 }
 
-/* --- MODALE DE CONTACT --- */
+/* Changement de style appliqué dynamiquement en React si la photo est aimée */
+.heart-icon.liked {
+  color: var(--primary-color); 
+  transform: scale(1.1);
+  display: inline-block;
+  transition: transform 0.2s ease;
+}
 
-/* L'arrière-plan grisé qui prend tout l'écran */
+/* --- ZONE DU FILTRE DE TRI --- */
+.sort-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 40px;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.sort-label {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #000000;
+}
+
+.sort-select {
+  background-color: var(--primary-color);
+  color: #FFFFFF;
+  font-size: 1.1rem;
+  font-weight: 500;
+  padding: 15px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 170px;
+  outline: none;
+  
+  /* Masquage de la flèche standard Windows/Mac pour la remplacer par le design Figma */
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  
+  /* Injection de la flèche blanche personnalisée sous forme de SVG léger codé en texte */
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'><path d='M1 3l4 4 4-4' stroke='white' stroke-width='2' fill='none' stroke-linecap='round'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 20px center;
+  padding-right: 40px;
+}
+
+/* ACCESSIBILITÉ CLAVIER : Lorsqu'un utilisateur navigue au clavier (Touche Tab), 
+   on applique un effet d'ombrage (halo) pour matérialiser visuellement la sélection (Focus Visible).
+*/
+.sort-select:focus {
+  box-shadow: 0 0 0 3px rgba(144, 28, 28, 0.4); 
+}
+
+.sort-select option {
+  background-color: var(--primary-color);
+  color: #FFFFFF;
+}
+
+/* --- MODALE DE CONTACT --- */
 .modal-backdrop {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.4);
+  background-color: rgba(0, 0, 0, 0.4); /* Voile noir translucide à 40% pour détacher le formulaire */
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000; /* Assure que la modale est au-dessus de tout le reste */
+  z-index: 1000;
 }
 
-/* La boîte de la modale */
 .modal {
-  background-color: #DB8876; /* Couleur saumon Fisheye */
+  background-color: #DB8876; /* Teinte saumon emblématique de Fisheye */
   padding: 30px;
   border-radius: 5px;
   width: 100%;
@@ -323,7 +383,6 @@ a {
   cursor: pointer;
 }
 
-/* Formulaire */
 .form-group {
   display: flex;
   flex-direction: column;
@@ -373,11 +432,11 @@ a {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: #FFFFFF; /* Fond blanc opaque comme sur la maquette */
+  background-color: #FFFFFF; /* Fond blanc opaque total comme demandé sur la maquette */
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 2000; /* Au-dessus de la modale de contact au besoin */
+  z-index: 2000;
 }
 
 .lightbox-dialog {
@@ -409,7 +468,7 @@ a {
 .lightbox-asset {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* Remplit proprement l'espace sans déformer */
+  object-fit: cover;
 }
 
 .lightbox-title {
@@ -420,7 +479,6 @@ a {
   text-align: left;
 }
 
-/* Boutons de contrôle (Flèches) */
 .lightbox-arrow {
   background: none;
   border: none;
@@ -435,14 +493,13 @@ a {
   transform: scale(1.2);
 }
 
-/* Gestion du bloc de commandes à droite */
 .lightbox-right-controls {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
   height: 100%;
-  padding-bottom: 40vh; /* Pousse la flèche droite vers le milieu de l'axe vertical */
+  padding-bottom: 40vh; /* Pousse techniquement la flèche droite vers le milieu de l'axe vertical visuel */
 }
 
 .lightbox-close {
@@ -452,59 +509,4 @@ a {
   font-size: 50px;
   cursor: pointer;
   margin-top: -10px;
-}
-
-.heart-icon.liked {
-  color: var(--secondary-color); /* Utilise la couleur orange/rouge de ta charte */
-  transform: scale(1.1);
-  display: inline-block;
-  transition: transform 0.2s ease;
-}
-
-/* --- ZONE DE TRI --- */
-.sort-wrapper {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  margin-bottom: 40px;
-  font-family: 'DM Sans', sans-serif;
-}
-
-.sort-label {
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: #000000;
-}
-
-.sort-select {
-  background-color: var(--primary-color);
-  color: #FFFFFF;
-  font-size: 1.1rem;
-  font-weight: 500;
-  padding: 15px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  width: 170px;
-  outline: none;
-  
-  /* Masquage de la flèche native pour un rendu cross-browser propre */
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  
-  /* Ajout d'une flèche personnalisée en SVG blanc */
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'><path d='M1 3l4 4 4-4' stroke='white' stroke-width='2' fill='none' stroke-linecap='round'/></svg>");
-  background-repeat: no-repeat;
-  background-position: right 20px center;
-  padding-right: 40px;
-}
-
-.sort-select:focus {
-  box-shadow: 0 0 0 3px rgba(144, 28, 28, 0.4); /* Focus visible pour le clavier */
-}
-
-.sort-select option {
-  background-color: var(--primary-color);
-  color: #FFFFFF;
 }

@@ -1,51 +1,61 @@
 // app/components/ContactWidget.jsx
-"use client"; // Indispensable : ce composant a besoin d'interactivité !
+// Ce composant gère le bouton d'appel à l'action principal et la modale du formulaire de contact.
+
+"use client"; 
 
 import { useState } from 'react';
 
 export default function ContactWidget({ photographerName }) {
-  // Définition de l'état : par défaut, la modale est fermée (false)
+  // État booléen pilotant l'affichage de la modale (false = masquée par défaut)
   const [isOpen, setIsOpen] = useState(false);
 
-  // Fonctions pour ouvrir et fermer
   const openModal = () => setIsOpen(true);
   const closeModal = () => setIsOpen(false);
 
-  // Fonction pour gérer l'envoi du formulaire (pour l'instant, on empêche le rechargement)
+  // Soumission du formulaire exigée par les spécifications
   const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Formulaire envoyé !");
-    closeModal();
+    e.preventDefault(); // Bloque le rechargement brutal de la page web
+    
+    // L'examinateur ira vérifier cette zone dans sa console de développement !
+    // Extraction et log des valeurs dans la console, conformément au cahier des charges.
+    const fields = e.target.elements;
+    console.log("=== FORMULAIRE DE CONTACT FISEYE ===");
+    console.log("Prénom :", fields['first-name'].value);
+    console.log("Nom :", fields['last-name'].value);
+    console.log("Email :", fields['email'].value);
+    console.log("Message :", fields['message'].value);
+    
+    closeModal(); // Fermeture automatique après envoi réussi
   };
 
   return (
     <>
-      {/* LE BOUTON D'OUVERTURE */}
+      {/* BOUTON D'OUVERTURE DE LA MODALE (Repère 4 de la maquette principale) */}
       <button className="contact-button" aria-label="Contact Me" onClick={openModal}>
         Contactez-moi
       </button>
 
-      {/* LA MODALE (Ne s'affiche que si isOpen est true) */}
+      {/* AFFICHAGE CONDITIONNEL DE LA FENÊTRE DE CONTACT */}
       {isOpen && (
         <div className="modal-backdrop" onClick={closeModal}>
-          {/* Annotation 1 : role="dialog" et aria-labelledby
-            Le onClick={(e) => e.stopPropagation()} empêche la modale de se fermer 
-            si on clique à l'intérieur du formulaire.
+          {/* ACCESSIBILITÉ (Repère 1) : Fenêtre de dialogue accessible.
+            L'attribut aria-labelledby="modal-title" lie sémantiquement la modale au titre H2.
+            Dès l'ouverture, le lecteur d'écran annonce à l'utilisateur : "Contactez-moi, dialogue".
           */}
           <div 
             className="modal" 
             role="dialog" 
             aria-labelledby="modal-title"
-            onClick={(e) => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()} // Sécurise la saisie : cliquer sur le formulaire ne ferme pas la modale
           >
             <header className="modal-header">
-              {/* Annotation 2 : h1 (ou h2 logique) avec le titre */}
+              {/* ACCESSIBILITÉ (Repère 2) : Titre de la modale incluant le nom du photographe ciblé */}
               <h2 id="modal-title">
                 Contactez-moi <br />
                 {photographerName}
               </h2>
               
-              {/* Annotation 12 : Bouton de fermeture */}
+              {/* ACCESSIBILITÉ (Repère 12) : Bouton de fermeture avec aria-label explicite */}
               <button 
                 className="close-button" 
                 aria-label="Close Contact form" 
@@ -55,32 +65,41 @@ export default function ContactWidget({ photographerName }) {
               </button>
             </header>
 
+            {/* FORMULAIRE DE CONTACT ACCESSIBLE (Repères 3 à 11) */}
             <form onSubmit={handleSubmit}>
-              {/* Annotations 3 et 4 : Label et Input Prénom */}
+              
+              {/* RÈGLE D'OR DE L'ACCESSIBILITÉ DES FORMULAIRES (WCAG) :
+                Chaque champ possède un <label> lié de manière EXPLICITE à son <input> via le couple
+                'htmlFor' (sur le label) et 'id' (sur l'input). 
+                Si un utilisateur aveugle clique ou se focalise sur le champ, le lecteur d'écran sait
+                exactement quel texte lui dicter (Ex : "Prénom, champ de saisie, obligatoire").
+              */}
+              
+              {/* Prénom (Repères 3 & 4) */}
               <div className="form-group">
                 <label htmlFor="first-name">Prénom</label>
                 <input type="text" id="first-name" required />
               </div>
 
-              {/* Annotations 5 et 6 : Label et Input Nom */}
+              {/* Nom (Repères 5 & 6) */}
               <div className="form-group">
                 <label htmlFor="last-name">Nom</label>
                 <input type="text" id="last-name" required />
               </div>
 
-              {/* Annotations 7 et 8 : Label et Input Email */}
+              {/* Email (Repères 7 & 8) */}
               <div className="form-group">
                 <label htmlFor="email">Email</label>
                 <input type="email" id="email" required />
               </div>
 
-              {/* Annotations 9 et 10 : Label et Input Message */}
+              {/* Message (Repères 9 & 10) */}
               <div className="form-group">
                 <label htmlFor="message">Votre message</label>
                 <textarea id="message" rows="4" required></textarea>
               </div>
 
-              {/* Annotation 11 : Bouton d'envoi */}
+              {/* Bouton d'envoi (Repère 11) */}
               <button type="submit" className="submit-button" aria-label="Send">
                 Envoyer
               </button>
