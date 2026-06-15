@@ -1,11 +1,11 @@
 // app/photographer/[id]/page.js
-// page detail du photographe. Ce fichier est le Server Component maître de ta page dynamique. 
-// C'est lui qui réceptionne l'identifiant dans l'URL, interroge la base de données, et distribue les informations aux widgets interactifs enfants. 
+// page detail du photographe. Ce fichier est le Server Component maître de la page dynamique du photographe. 
+// Il réceptionne l'identifiant dans l'URL, interroge la base de données, et distribue les informations aux widgets interactifs enfants (MediaCard et Lightbox). 
 // La page du photographe est configurée comme un Server Component dynamique. Elle intercepte l'identifiant présent dans l'URL grâce à la prop asynchrone params 
-// et effectue les requêtes de données en tâche de fond avec Prisma directement sur le serveur. 
+// et effectue les requêtes de données avec Prisma directement sur le serveur. 
 // Cela élimine tout temps de latence au chargement et empêche l'exposition des requêtes de base de données côté client. 
-// Pour préserver une structure sémantique SEO irréprochable et conforme au WCAG, j'ai veillé à ce que le nom du photographe soit l'unique balise <h1> de la page. 
-// Enfin, j'ai optimisé les indicateurs de performance (Core Web Vitals) en appliquant l'attribut priority sur le portrait d'identité. 
+// Pour préserver la structure sémantique SEO, le nom du photographe est l'unique balise <h1> de la page. 
+// Les indicateurs de performance (Core Web Vitals) sont optimisés en appliquant l'attribut priority sur le portrait d'identité. 
 // Cela force le préchargement de la ressource détectée comme l'élément LCP principal de la zone supérieure de flottaison.
 
 import { getPhotographer, getAllMediasForPhotographer } from '../../lib/prisma-db';
@@ -14,14 +14,13 @@ import Image from 'next/image'; // Importation du composant Image optimisé pour
 import MediaGallery from '../../components/MediaGallery';
 import ContactWidget from '../../components/ContactWidget';
 
-// SOUTENANCE (Route Dynamique) : Le dossier s'appellant [id], Next.js injecte automatiquement 
+// Route Dynamique : Le dossier s'appellant [id], Next.js injecte automatiquement 
 // un objet contenant les paramètres de l'URL dans la propriété (prop) 'params'.
 export default async function PhotographerPage({ params }) {
   
   /* =========================================================================
      1. RÉCUPÉRATION DE L'URL & SÉCURISATION (Next.js Asynchrone)
      ========================================================================= */
-  // Dans les versions modernes de Next.js, 'params' est traité comme une promesse.
   // On doit utiliser 'await' pour extraire l'ID en toute sécurité sans bloquer le thread principal.
   const { id } = await params;
 
@@ -44,8 +43,8 @@ export default async function PhotographerPage({ params }) {
 
   return (
     <main>
-      {/* Le Header ne reçoit pas la prop isHomePage, il n'affichera donc pas le H1 global[cite: 10, 14]. 
-          Cela permet de laisser l'exclusivité du titre de niveau 1 (H1) au nom du photographe ci-dessous[cite: 14].
+      {/* Le Header ne reçoit pas la prop isHomePage, il n'affichera donc pas le H1 global. 
+          Cela permet de laisser l'exclusivité du titre de niveau 1 (H1) au nom du photographe ci-dessous.
       */}
       <Header />
       
@@ -63,18 +62,18 @@ export default async function PhotographerPage({ params }) {
         </div>
         
         {/* COMPOSANT INTERACTIF (Client Component Enfant) : La modale de contact.
-            On lui transmet le nom du photographe pour personnaliser dynamiquement le titre du formulaire[cite: 9, 14].
+            On lui transmet le nom du photographe pour personnaliser dynamiquement le titre du formulaire.
         */}
         <ContactWidget photographerName={photographer.name} />
         
         {/* Conteneur de la photo d'identité (Repère 5 de la maquette) */}
         <div className="portrait-container">
           {/* PERFORMANCE & ACCESSIBILITÉ CIBLÉE (Warning LCP résolu) :
-              - src & alt : L'alt contient explicitement le nom du photographe comme exigé par les specs[cite: 4, 14].
-              - fill & sizes : 'fill' force l'image à occuper le cercle parent positionné en relative[cite: 11, 14].
+              - src & alt : L'alt contient explicitement le nom du photographe comme exigé par les specs.
+              - fill & sizes : 'fill' force l'image à occuper le cercle parent positionné en relative.
               - priority : Dispositif anti-lazy-loading. Cette image étant l'élément visuel majeur situé 
                 au-dessus de la ligne de flottaison (Above the fold), 'priority' ordonne au navigateur 
-                de la charger immédiatement, optimisant ainsi le score LCP de la page[cite: 14].
+                de la charger immédiatement, optimisant ainsi le score LCP de la page.
           */}
           <Image 
             src={portraitPath} 
@@ -89,7 +88,7 @@ export default async function PhotographerPage({ params }) {
 
       {/* COMPOSANT INTERACTIF MAÎTRE (Client Component Enfant) : La galerie globale.
           On lui injecte le tableau complet des médias, le nom pour la lightbox, et le tarif journalier.
-          Ce composant va encapsuler la grille, le tri, la lightbox, et l'encart flottant[cite: 6, 14].
+          Ce composant va encapsuler la grille, le tri, la lightbox, et l'encart flottant.
       */}
       <MediaGallery 
         medias={medias} 

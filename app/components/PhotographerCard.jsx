@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image'; // Importation du composant d'optimisation natif de Next.js
 
 export default function PhotographerCard({ photographer }) {
-  // Dynamisation du chemin de l'image en fonction des données fournies par la BDD
+  // Chemin de l'image en fonction des données fournies par la BDD
   const imagePath = `/assets/photographers/ID/${photographer.portrait}`;
 
   return (
@@ -16,14 +16,14 @@ export default function PhotographerCard({ photographer }) {
       */}
       <Link href={`/photographer/${photographer.id}`} aria-label={photographer.name}>
         <div className="img-container">
-          {/* PERFORMANCE (LCP & Écrans Haute Densité) :
+          {/* Remarques :
             - 'fill' indique à l'image d'occuper 100% de son conteneur parent (.img-container).
             - 'sizes="200px"' indique à Next.js la taille exacte de rendu pour qu'il génère un srcSet adapté,
                fournissant un fichier HD (400px ou 600px) uniquement si l'écran est un écran Retina/4K.
             - 'priority' force le préchargement dans le HEAD HTML car ces images apparaissent 
                "above the fold" (au-dessus de la ligne de flottaison) au chargement de l'accueil.
             - 'alt=""' (vide) : Le nom du photographe étant déjà dicté par l'aria-label du <Link>, 
-               on laisse l'alt vide pour éviter que le lecteur d'écran ne bégaie.
+               on laisse l'alt vide pour éviter que le lecteur d'écran ne le repete inutilement.
           */}
           <Image 
             src={imagePath} 

@@ -31,7 +31,7 @@ export const metadata = {
 };
 
 // COMPOSANT MAÎTRE : RootLayout enveloppe TOUTES les pages de l'application.
-// Le paramètre '{children}' représente de manière dynamique le fichier de la page demandée (page.js d'accueil ou de profil).
+// Le paramètre '{children}' représente de manière dynamique le fichier de la page demandée (page.js d'accueil ou de profil du photographe).
 export default function RootLayout({ children }) {
   return (
     /* ACCESSIBILITÉ (La prop 'lang') : 
