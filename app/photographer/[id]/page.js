@@ -48,7 +48,7 @@ export default async function PhotographerPage({ params }) {
       */}
       <Header />
       
-      {/* SECTION SÉMANTIQUE : L'en-tête du profil du photographe (Bandeau gris) */}
+      {/* SECTION SÉMANTIQUE : L'en-tête du profil du photographe */}
       <section className="photographer-header">
         
         {/* Zone des informations textuelles sémantiques (Repères 2 & 3 de la maquette) */}
@@ -70,7 +70,7 @@ export default async function PhotographerPage({ params }) {
         <div className="portrait-container">
           {/* PERFORMANCE & ACCESSIBILITÉ CIBLÉE (Warning LCP résolu) :
               - src & alt : L'alt contient explicitement le nom du photographe comme exigé par les specs.
-              - fill & sizes : 'fill' force l'image à occuper le cercle parent positionné en relative.
+              - fill & sizes : 'fill' force l'image à occuper le cercle parent (voir .portrait-container dans global.css).
               - priority : Dispositif anti-lazy-loading. Cette image étant l'élément visuel majeur situé 
                 au-dessus de la ligne de flottaison (Above the fold), 'priority' ordonne au navigateur 
                 de la charger immédiatement, optimisant ainsi le score LCP de la page.

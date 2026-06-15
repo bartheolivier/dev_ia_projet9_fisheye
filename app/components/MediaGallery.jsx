@@ -1,6 +1,10 @@
 // app/components/MediaGallery.jsx
-// C'est le composant central (Chef d'orchestre) de la page détail. 
+// C'est le composant central de la page détail photographe. 
 // C'est un Client Component car il pilote toute l'interactivité (tri, likes en direct, ouverture de la Lightbox).
+// Remarques:
+// La vignette de la photo (MediaCard) et le grand carrousel (Lightbox) sont des composants frères: ils ne peuvent pas se parler directement
+// La solution, c'est de "remonter l'état" dans leur parent commun : MediaGallery. 
+// C'est lui qui détient la mémoire de l'application et qui redistribue les ordres à ses enfants.
 
 "use client"; // Activation obligatoire du moteur React côté client pour utiliser les Hooks (useState)
 
@@ -14,20 +18,26 @@ export default function MediaGallery({ medias: initialMedias, photographerName, 
   /* ==========================================
      1. GESTION DES ÉTATS (STATES)
      ========================================== */
+  // La mémoire:
+  // Au sommet du composant, on installe 4 variables d'état (useState): 4 registres de mémoire de la "tour de controle"
   // On initialise notre état local avec les médias reçus du serveur
+  // La liste de toutes les photos/vidéos. Utile pour pouvoir augmenter ou diminuer les compteurs de likes.
   const [medias, setMedias] = useState(initialMedias);
   // Tableau stockant les IDs des photos aimées par l'utilisateur (pour bloquer à un seul like par photo)
+  // Un carnet de notes qui liste les identifiants (id) des photos que l'utilisateur a aimées. 
+  // Ça évite qu'un utilisateur clique 50 fois sur le même cœur pour gonfler artificiellement les scores.
   const [likedMediaIds, setLikedMediaIds] = useState([]);
-  // Stocke l'index du média actuellement affiché dans la Lightbox (null = Lightbox fermée)
+  // Stocke l'index du média actuellement affiché dans la Lightbox
+  // Si c'est null, ça veut dire que le carrousel est fermé. Si c'est 0, c'est la première photo, etc.
   const [selectedIndex, setSelectedIndex] = useState(null);
   // Stocke le critère de tri actif ('popularity' par défaut)
+  // Un mot-clé ('popularity', 'date' ou 'title') qui se met à jour dès que l'utilisateur change le choix du menu déroulant.
   const [sortBy, setSortBy] = useState('popularity');
 
   /* ==========================================
      2. ALGORITHME DE TRI (A LA VOLÉE)
      ========================================== */
-  // SOUTENANCE : On ne trie pas dans un useState pour éviter les re-rendus infinis.
-  // On trie à la volée sur une copie du tableau ([...medias]) lors de la phase de rendu.
+  // On trie sur une copie du tableau ([...medias]) lors de la phase de rendu.
   const sortedMedias = [...medias].sort((a, b) => {
     if (sortBy === 'popularity') {
       return b.likes - a.likes; // Tri numérique décroissant (du plus liké au moins liké)
@@ -47,7 +57,7 @@ export default function MediaGallery({ medias: initialMedias, photographerName, 
   const openLightbox = (index) => setSelectedIndex(index);
   const closeLightbox = () => setSelectedIndex(null);
 
-  // PIÈGE DE SOUTENANCE ÉVITÉ : On utilise impérativement le tableau TRÉ ("sortedMedias")
+  // On utilise impérativement le tableau trié ("sortedMedias")
   // pour calculer les index suivants/précédents, sinon les flèches afficheraient la mauvaise image !
   const nextMedia = () => {
     // L'opérateur Modulo (%) permet de créer une boucle infinie : arrivé au bout, on repart à 0.
@@ -62,27 +72,48 @@ export default function MediaGallery({ medias: initialMedias, photographerName, 
   /* ==========================================
      4. LOGIQUE DES LIKES (SYNCHRONISATION INTERFACE & BDD)
      ========================================== */
+  /* Analyse de la situation actuelle:
+   isAlreadyLiked : On va regarder dans notre carnet de notes (likedMediaIds) si l'ID de la photo sur laquelle on vient de cliquer y figure déjà.
+      - Si oui : Cela veut dire que l'utilisateur avait déjà aimé cette photo. Ce nouveau clic signifie donc qu'il veut retirer son like.
+      - Si non : C'est un nouveau like.
+   targetMedia : On va chercher la photo en question dans notre liste globale (medias) pour connaître son nombre actuel de likes.
+   if (!targetMedia) return; : C'est une sécurité. Si pour une raison quelconque la photo n'existe pas, 
+   on arrête tout de suite la fonction pour éviter de faire planter l'application.
+  */
   const handleLikeToggle = async (mediaId) => {
     const isAlreadyLiked = likedMediaIds.includes(mediaId);
     const targetMedia = medias.find((m) => m.id === mediaId);
     if (!targetMedia) return;
 
     // Calcul de la nouvelle valeur absolue attendue par la fonction du backend
+    // On utilise une condition ternaire (? :) :
+    // Si isAlreadyLiked est vrai on fait -1.
+    // Si isAlreadyLiked est faux on fait +1.
     const newLikesCount = targetMedia.likes + (isAlreadyLiked ? -1 : 1);
 
-    // MISE À JOUR OPTIMISTE : On met à jour l'écran immédiatement pour l'utilisateur
+    // On met à jour l'écran immédiatement pour l'utilisateur
     setMedias((prevMedias) =>
       prevMedias.map((media) =>
         media.id === mediaId ? { ...media, likes: newLikesCount } : media
       )
     );
+    /* Remarque:
+    En React, on n'a pas le droit de modifier directement un tableau (interdit de faire media.likes = newLikesCount). 
+    Il faut obligatoirement créer un nouveau tableau et remplacer l'ancien.
+    - prevMedias.map(...) : On prend l'ancienne liste de photos et on crée une copie en la passant en revue, photo par photo.
+    - media.id === mediaId ? : Est-ce que cette photo est celle qui a été cliquée ?
+        - Si oui : { ...media, likes: newLikesCount }=> On duplique la photo mais on écrase son compteur de likes avec notre nouvelle valeur.
+        - Si non : : media => On laisse la photo exactement telle qu'elle était.
+    */
+
 
     // Enregistrement de l'état du clic (Ajout ou suppression de l'ID dans notre liste)
+    // si la photo était déjà aimée, on la retire du carnet avec un .filter(). Sinon, on l'ajoute à la fin du tableau ([...prevIds, mediaId]).
     setLikedMediaIds((prevIds) =>
       isAlreadyLiked ? prevIds.filter((id) => id !== mediaId) : [...prevIds, mediaId]
     );
 
-    // PERSISTANCE : Envoi asynchrone au serveur via notre Server Action qui exploite le script du backend
+    // PERSISTANCE : Envoi asynchrone au serveur via notre Server Action qui exploite le script du backend pour modifier la ligne dans SQLite
     try {
       await saveLikeToDB(mediaId, newLikesCount);
     } catch (error) {
