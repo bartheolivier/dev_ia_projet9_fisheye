@@ -61,11 +61,13 @@ export default function MediaGallery({ medias: initialMedias, photographerName, 
   // pour calculer les index suivants/précédents, sinon les flèches afficheraient la mauvaise image !
   const nextMedia = () => {
     // L'opérateur Modulo (%) permet de créer une boucle infinie : arrivé au bout, on repart à 0.
+    // Ex avec 3 photos (longueur 3) : si on est sur la photo index 2 -> (2 + 1) % 3 = reste 0 -> Retour au début !
     setSelectedIndex((prev) => (prev + 1) % sortedMedias.length);
   };
 
   const prevMedia = () => {
     // On ajoute 'sortedMedias.length' avant le modulo pour éviter de tomber sur un index négatif
+    // Ex : si on est à l'index 0 -> (0 - 1 + 3) % 3 = 2 % 3 = reste 2 -> On bascule bien sur la dernière photo !
     setSelectedIndex((prev) => (prev - 1 + sortedMedias.length) % sortedMedias.length);
   };
 
@@ -77,13 +79,10 @@ export default function MediaGallery({ medias: initialMedias, photographerName, 
       - Si oui : Cela veut dire que l'utilisateur avait déjà aimé cette photo. Ce nouveau clic signifie donc qu'il veut retirer son like.
       - Si non : C'est un nouveau like.
    targetMedia : On va chercher la photo en question dans notre liste globale (medias) pour connaître son nombre actuel de likes.
-   if (!targetMedia) return; : C'est une sécurité. Si pour une raison quelconque la photo n'existe pas, 
-   on arrête tout de suite la fonction pour éviter de faire planter l'application.
   */
   const handleLikeToggle = async (mediaId) => {
     const isAlreadyLiked = likedMediaIds.includes(mediaId);
     const targetMedia = medias.find((m) => m.id === mediaId);
-    if (!targetMedia) return;
 
     // Calcul de la nouvelle valeur absolue attendue par la fonction du backend
     // On utilise une condition ternaire (? :) :
@@ -114,6 +113,8 @@ export default function MediaGallery({ medias: initialMedias, photographerName, 
     );
 
     // PERSISTANCE : Envoi asynchrone au serveur via notre Server Action qui exploite le script du backend pour modifier la ligne dans SQLite
+    // 'saveLikeToDB' est une Server Action ('use server') : elle s'exécute exclusivement côté serveur.
+    // Cela permet de modifier SQLite via Prisma sans jamais exposer les identifiants de notre BDD ni créer d'API REST publique côté client.
     try {
       await saveLikeToDB(mediaId, newLikesCount);
     } catch (error) {
@@ -130,7 +131,7 @@ export default function MediaGallery({ medias: initialMedias, photographerName, 
       {/* ACCESSIBILITÉ (Repères 7 & 8) : Zone du menu de sélection de tri */}
       <div className="sort-wrapper">
         <label htmlFor="sort-select" id="sort-label" className="sort-label">Trier par</label>
-        {/* SOUTENANCE : L'utilisation d'une balise native <select> garantit par défaut 
+        {/* L'utilisation d'une balise native <select> garantit par défaut 
           une conformité totale avec les critères d'accessibilité WCAG. Le clavier (touches fléchées),
           le focus visuel, et l'annonce par les lecteurs d'écrans sont natifs et infaillibles.
         */}
@@ -148,27 +149,43 @@ export default function MediaGallery({ medias: initialMedias, photographerName, 
       </div>
 
       {/* GRILLE DES MÉDIAS */}
+      
       <section className="media-grid">
         {sortedMedias.map((media, index) => (
           <MediaCard 
+            // ACCESSIBILITÉ & PERFORMANCE : Clé unique requise par React pour identifier chaque élément de la liste et optimiser les re-rendus
             key={media.id} 
+
+            // DONNÉES : Transmission de l'objet média complet (titre, source, compteur de likes) 
             media={media} 
+  
+            // LOGIQUE MÉTIER : Passage du nom du photographe pour reconstruire dynamiquement le chemin des fichiers multimédias 
             photographerName={photographerName}
-            onSelect={() => openLightbox(index)} // On passe l'index issu du tableau trié
+  
+            // INTERACTIVITÉ / CALLBACK : Fonction de rappel pour transmettre l'index de la photo cliquée au parent et ouvrir la Lightbox
+            onSelect={() => openLightbox(index)} 
+  
+            // ÉTAT : Évaluation booléenne dynamique pour savoir si cette photo spécifique a déjà été aimée par l'utilisateur
             isLiked={likedMediaIds.includes(media.id)}
-            onLike={() => handleLikeToggle(media.id)}
+  
+            // SYNCHRONISATION / CALLBACK : Fonction de rappel pour notifier le parent qu'un clic sur le cœur nécessite une mise à jour UI et BDD
+            onLike={() => handleLikeToggle(media.id)} 
           />
         ))}
       </section>
 
       {/* AFFICHAGE CONDITIONNEL DE LA LIGHTBOX */}
+      {/* INTERRUPTEUR LOGIQUE (&&) : Le composant Lightbox n'est instancié dans le DOM que si selectedIndex n'est pas nul */}
       {selectedIndex !== null && (
         <Lightbox 
-          media={sortedMedias[selectedIndex]} // Injection du média trié actif
+          // On passe uniquement le média actif extrait du tableau trié en fonction de l'index mémorisé
+          media={sortedMedias[selectedIndex]} 
           photographerName={photographerName}
-          onClose={closeLightbox}
-          onPrev={prevMedia}
-          onNext={nextMedia}
+          
+          // FONCTIONS DE RAPPEL (CALLBACKS) : On transmet les télécommandes à la Lightbox pour qu'elle puisse modifier l'état du parent au clic/clavier
+          onClose={closeLightbox} // Éteint l'interrupteur en remettant l'index à null
+          onPrev={prevMedia}       // Modifie l'index vers le média précédent
+          onNext={nextMedia}       // Modifie l'index vers le média suivant
         />
       )}
 

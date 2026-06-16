@@ -50,35 +50,17 @@ export default function MediaCard({ media, photographerName, onSelect, isLiked, 
         
         <div className="media-likes">
           <span className="like-count">{media.likes}</span>
-          
-          {/* ACCESSIBILITÉ AVANCÉE (Élément interactif personnalisé) :
-            Puisque le cœur est un <span> (élément non-natif), nous devons lui greffer manuellement 
-            tous les comportements d'un vrai bouton pour passer les tests d'accessibilité (AChecker) :
-            - role="button" : Indique aux lecteurs d'écran qu'il s'agit d'un élément cliquable.
-            - tabIndex={0} : Permet d'insérer le cœur dans le flux de tabulation naturelle du clavier (touche Tab).
-            - e.stopPropagation() : 🛑 CRUCIAL ! Empêche le clic d'être intercepté par la carte (ce qui ouvrirait la Lightbox).
-            - onKeyDown : Permet aux personnes privées de souris de liker en appuyant sur 'Entrée' ou 'Espace'.
-          */}
-          <span 
+    
+          <button 
             className={`heart-icon ${isLiked ? 'liked' : ''}`} 
             aria-label="likes" 
-            role="button"
-            tabIndex={0}
             onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation(); 
-              onLike();
-            }}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                e.stopPropagation();
-                onLike();
-              }
+              e.stopPropagation(); // Empêche le clic d'ouvrir la Lightbox
+              onLike();            // Déclenche la Server Action
             }}
           >
             ♥
-          </span>
+          </button>
         </div>
       </div>
     </article>

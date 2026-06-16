@@ -329,16 +329,33 @@ a {
   font-weight: 500;
 }
 
+/* --- SÉMANTIQUE BUTTON RESET --- */
 .heart-icon {
-  cursor: pointer;
+  background: none;        /* Supprime le fond gris natif du bouton */
+  border: none;            /* Supprime les bordures en relief */
+  padding: 0;              /* Supprime les marges internes par défaut */
+  font: inherit;           /* Force le bouton à hériter de la taille de texte du parent (1.2rem) */
+  color: inherit;          /* Conserve la couleur rouge initiale définie dans .media-info */
+  cursor: pointer;         /* Rétablit le curseur main (pointer) au survol */
+  display: inline-flex;    /* Aligne parfaitement le picto ♥ sur l'axe vertical du compteur numérique */
+  align-items: center;
+  transition: transform 0.2s ease, color 0.2s ease; /* Fluidifie l'animation du Like */
 }
 
 /* Changement de style appliqué dynamiquement en React si la photo est aimée */
 .heart-icon.liked {
   color: var(--primary-color); 
-  transform: scale(1.1);
-  display: inline-block;
-  transition: transform 0.2s ease;
+  transform: scale(1.2);   /* Un scale à 1.2 rend l'effet de rebond (pop) plus dynamique au clic */
+}
+
+/* ACCESSIBILITÉ CLAVIER (WCAG AA) : 
+   Puisque c'est un vrai bouton, on lui crée un indicateur de focus sur-mesure 
+   qui s'activera UNIQUEMENT si l'utilisateur navigue avec la touche Tab.
+*/
+.heart-icon:focus-visible {
+  outline: 3px solid var(--primary-color);
+  outline-offset: 4px;
+  border-radius: 3px;
 }
 
 /* --- ZONE DU FILTRE DE TRI --- */
