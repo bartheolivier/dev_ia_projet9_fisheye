@@ -14,6 +14,9 @@ export default function PhotographerCard({ photographer }) {
         Cela crée une grande zone cliquable propre et évite qu'un lecteur d'écran ne lise deux fois 
         le nom du photographe (une fois pour l'image, une fois pour le texte).
       */}
+      {/* On enveloppe la photo et le nom du photographe dans la balise link
+      cela permet de gerer le clic sur l'image ou le nom du photographe (pas besoin d'ecouteur onClick) qui va declancher le systeme de routage propre à Next
+      */}
       <Link href={`/photographer/${photographer.id}`} aria-label={photographer.name}>
         <div className="img-container">
           {/* Remarques :

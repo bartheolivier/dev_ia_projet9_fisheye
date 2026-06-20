@@ -14,34 +14,17 @@ import PhotographerCard from './components/PhotographerCard';
 export default async function Home() {
   
   // 1. REQUÊTAGE SERVEUR : On récupère les données brutes directement via Prisma.
-  // Pas besoin de 'fetch()', de route d'API intermédiaire ou de 'useEffect' côté client.
+  // Pas besoin de 'fetch()' ou de route d'API .
   const rawPhotographers = await getAllPhotographers();
 
-  // 2. CONFORMITÉ MAQUETTE :
-  // La base de données ne renvoie pas les photographes dans l'ordre correspondant à la maquette Figma.
-  // Pour respecter SCRUPULEUSEMENT l'ordre d'affichage visuel imposé par la maquette Figma
-  // (Mimi Keel en premier, etc.), on définit un tableau d'index de référence.
+
+  // 2. CONFORMITÉ MAQUETTE : Réalignement des données sur l'ordre visuel de Figma
   const mockupOrder = [243, 930, 82, 527, 925, 195];
 
-  // On initialise un tableau vide destiné à recevoir les objets réordonnés
-  const photographers = [];
-
-  // Algorithme de tri d'ordonnancement basé sur la maquette :
-  // On boucle sur notre tableau de référence (mockupOrder)
-  for (let i = 0; i < mockupOrder.length; i++) {
-    const currentId = mockupOrder[i];
-
-    // Pour chaque ID de la maquette, on cherche le photographe correspondant dans les données brutes
-    const matchingPhotographer = rawPhotographers.find(
-      (photographer) => photographer.id === currentId
-    );
-
-    // Si on le trouve, on l'ajoute à la fin de notre liste ordonnée
-    if (matchingPhotographer) {
-      photographers.push(matchingPhotographer);
-    }
-  }
-
+  const photographers = mockupOrder
+    .map((id) => rawPhotographers.find((p) => p.id === id))
+    .filter((p) => p !== undefined);
+    
   return (
     <main>
       {/* RENDU CONDITIONNEL : On informe le composant enfant Header qu'il est sur l'accueil.
