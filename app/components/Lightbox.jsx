@@ -1,16 +1,29 @@
 // app/components/Lightbox.jsx
 // Ce composant gère le carrousel d'affichage plein écran.
-// C'est un Client Component ("use client") car il interagit directement avec l'API globale du navigateur (window)[cite: 111, 115].
+// C'est un Client Component ("use client") car il interagit directement avec l'API globale du navigateur (window).
 
 "use client";
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react'; // Modification : Ajout de useRef pour cibler le dialogue
 import Image from 'next/image';
 
 // RECEPTION DES PROPS : Le parent 'MediaGallery' fournit l'objet média actif à afficher 
 // ainsi que les "télécommandes" (fonctions de rappel) pour modifier l'état central.
 export default function Lightbox({ media, photographerName, onClose, onPrev, onNext }) {
   
+  // Focus Trap - Étape 1 : Création d'une référence pour cibler la fenêtre de dialogue
+  // et pouvoir lister ses éléments interactifs internes sans interférer avec le reste du site.
+  const dialogRef = useRef(null);
+ 
+  // Focus Trap - Étape 2 : AUTO-FOCUS À L'OUVERTURE
+ 
+  useEffect(() => {
+    // Dès que la Lightbox apparaît à l'écran, on force le focus du clavier sur la croix de fermeture.
+    // Cela évite que le focus ne reste perdu sur l'élément de la galerie situé en arrière-plan.
+    const closeButton = dialogRef.current?.querySelector('.lightbox-close');
+    if (closeButton) closeButton.focus();
+  }, []); // S'exécute une seule fois au montage de la Lightbox
+
   /* ==========================================
      1. ÉCOUTEUR DE CLAVIER GLOBAL (ACCESSIBILITÉ WCAG)
      ========================================== */
@@ -18,18 +31,45 @@ export default function Lightbox({ media, photographerName, onClose, onPrev, onN
     // Cette fonction intercepte les pressions de touches sur l'ensemble de la page.
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') onClose();    // Conforme WCAG : Fermeture immédiate via la touche Échap
-      if (e.key === 'ArrowRight') onNext(); // Conforme WCAG : Média suivant via la flèche droite 
-      if (e.key === 'ArrowLeft') onPrev();  // Conforme WCAG : Média précédent via la flèche gauche 
+      if (e.key === 'ArrowRight') onNext(); // Conforme WCAG : Média suivant via la flèche droite
+      if (e.key === 'ArrowLeft') onPrev();  // Conforme WCAG : Média précédent via la flèche gauche
+
+  // Focus Trap - Étape 3 : PIÈGE À FOCUS (TOUCHE TAB)
+
+      if (e.key === 'Tab') {
+        // On récupère dynamiquement les seuls éléments interactifs de notre modale
+        const focusableElements = dialogRef.current?.querySelectorAll('button, video');
+        if (!focusableElements || focusableElements.length === 0) return;
+
+        const firstElement = focusableElements[0];
+        const lastElement = focusableElements[focusableElements.length - 1];
+
+        if (e.shiftKey) {
+          // Si l'utilisateur fait Shift + Tab (navigation arrière) et qu'il est sur le premier élément (Flèche Gauche)
+          // on force le focus à rebondir sur le dernier élément (Flèche Droite)
+          if (document.activeElement === firstElement) {
+            lastElement.focus();
+            e.preventDefault(); // On bloque le comportement par défaut qui ferait sortir le focus de la modale
+          }
+        } else {
+          // Si l'utilisateur fait Tab seul (navigation avant) et qu'il est sur le dernier élément (Flèche Droite)
+          // on force le focus à repartir sur le premier élément (Flèche Gauche)
+          if (document.activeElement === lastElement) {
+            firstElement.focus();
+            e.preventDefault(); // On bloque le comportement par défaut qui ferait sortir le focus de la modale
+          }
+        }
+      }
     };
     
     // ENREGISTREMENT : On attache l'écouteur à l'objet global 'window' pour capter le clavier 
     // même si l'utilisateur n'a pas le focus précis sur un bouton.
     window.addEventListener('keydown', handleKeyDown);
     
-    // SOUTENANCE (Gestion des fuites de mémoire / Anti-Memory Leak) :
+    // Gestion des fuites de mémoire / Anti-Memory Leak :
     // La fonction retournée est la fonction de nettoyage (cleanup). Elle s'exécute AUTOMATIQUEMENT
     // lorsque le composant est démonté (fermé). Si on omettait ce 'removeEventListener', l'écouteur 
-    // resterait actif en tâche de fond sur le navigateur, créant des bugs majeurs et ralentissant le site.
+    // resterait actif en tâche de fond sur le navigateur, créant des bugs majeurs et ralentissant le site[cite: 194].
     return () => window.removeEventListener('keydown', handleKeyDown);
 
     // TABLEAU DE DÉPENDANCES : React ré-attache proprement l'écouteur si l'une de ces fonctions de rappel 
@@ -52,8 +92,10 @@ export default function Lightbox({ media, photographerName, onClose, onPrev, onN
         - role="dialog" : Indique explicitement aux lecteurs d'écrans qu'il s'agit d'une fenêtre superposée.
         - aria-label : Donne un nom clair à cette zone d'affichage pour la synthèse vocale d'Orca.
         - e.stopPropagation() : MÉCANISME CRUCIAL (voir explications ci-dessous).
+        - ref={dialogRef} : Attachement de la référence pour le piège à focus (Focus Trap).
       */}
       <div 
+        ref={dialogRef}
         className="lightbox-dialog" 
         role="dialog" 
         aria-label="image closeup view"
@@ -103,7 +145,7 @@ export default function Lightbox({ media, photographerName, onClose, onPrev, onN
 
         {/* CONTROLES DE DROITE : Superposition ordonnée en CSS pour regrouper la fermeture et la progression */}
         <div className="lightbox-right-controls">
-          {/* ACCESSIBILITÉ (Repère 6) : Bouton de fermeture doté de sa description accessible */}
+          {/* ACCESSIBILITÉ (Repère 6) : Bouton de fermeture doté de sa description accessible [cite: 68] */}
           <button className="lightbox-close" aria-label="Close dialog" onClick={onClose}>
             ×
           </button>
