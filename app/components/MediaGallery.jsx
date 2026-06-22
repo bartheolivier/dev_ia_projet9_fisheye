@@ -37,7 +37,14 @@ export default function MediaGallery({ medias: initialMedias, photographerName, 
   /* ==========================================
      2. ALGORITHME DE TRI (A LA VOLÉE)
      ========================================== */
-  // On trie sur une copie du tableau ([...medias]) lors de la phase de rendu.
+  /*
+  Pour trier les médias, on crée d'abord une copie du tableau pour ne pas modifier les données d'origine de React.
+  Ensuite, on utilise la méthode .sort() qui compare les éléments deux par deux. 
+  Pour la popularité et les dates, on utilise une soustraction numérique b - a pour obtenir un ordre décroissant. 
+  Pour les titres, on utilise la fonction localeCompare() qui permet un tri alphabétique de A à Z 
+  et qui prend correctement en compte les caractères accentués de la langue française.
+  */
+  // On trie sur une copie du tableau ([...medias]) lors de la phase de rendu.Le tableau d'origine reste intact et sécurisé.
   const sortedMedias = [...medias].sort((a, b) => {
     if (sortBy === 'popularity') {
       return b.likes - a.likes; // Tri numérique décroissant (du plus liké au moins liké)

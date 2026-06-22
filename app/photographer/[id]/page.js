@@ -74,6 +74,10 @@ export default async function PhotographerPage({ params }) {
               - priority : Dispositif anti-lazy-loading. Cette image étant l'élément visuel majeur situé 
                 au-dessus de la ligne de flottaison (Above the fold), 'priority' ordonne au navigateur 
                 de la charger immédiatement, optimisant ainsi le score LCP de la page.
+              - Remarques sur le score LCP: Le score LCP, ou Largest Contentful Paint, est un indicateur de Google qui mesure le temps nécessaire pour afficher 
+              le plus grand élément visuel situé au-dessus de la ligne de flottaison. Ici, cet élément clé est le portrait du photographe. 
+              Pour garantir un score LCP optimal, on met l'attribut priority pour forcer le téléchargement immédiat de l'image, 
+              et on defini l'attribut sizes pour alléger le fichier. Cela permet d'offrir une sensation de rapidité immédiate.
           */}
           <Image 
             src={portraitPath} 
