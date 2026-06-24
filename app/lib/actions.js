@@ -1,6 +1,9 @@
 // app/lib/actions.js
 // La server action
 // Ce fichier centralise les actions de modification des données exécutées à la demande du client et envoyées sur le serveur.
+// Le script actions.js sert de passerelle sécurisée grâce au mécanisme des Server Actions. 
+// Il permet au composant client (MediaCard) de passer un ordre au serveur de manière totalement sécurisée. 
+// C'est le serveur qui prend ensuite le relais pour exécuter le script prisma-db.js et modifier la base de données.
 
 'use server'; // Ceci indique au framework que toutes les fonctions 
               // de ce fichier sont des "Server Actions". Next.js va automatiquement générer un endpoint 

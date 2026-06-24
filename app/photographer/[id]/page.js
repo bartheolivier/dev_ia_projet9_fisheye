@@ -28,15 +28,8 @@ export default async function PhotographerPage({ params }) {
      2. REQUÊTAGE SÉCURISÉ CÔTÉ SERVEUR (Prisma Backend)
      ========================================================================= */
   // On lance deux requêtes asynchrones parallèles à notre base de données SQLite.
-  const photographer = await getPhotographer(id);
-  const medias = await getAllMediasForPhotographer(id);
-
-  // SÉCURITÉ / SÉMANTIQUE : Si un utilisateur saisit manuellement un ID qui n'existe pas 
-  // dans la base de données (ex: /photographer/999), on intercepte l'erreur immédiatement.
-  // Cela évite un crash de l'application et renvoie un message sémantique propre.
-  if (!photographer) {
-    return <h1>Photographe introuvable</h1>;
-  }
+  const photographer = await getPhotographer(id); // on recupere toutes les infos du photographe selectionné
+  const medias = await getAllMediasForPhotographer(id); // on recupere les photos et videos du photographe selectionné
 
   // Construction dynamique du chemin de l'image d'identité
   const portraitPath = `/assets/photographers/ID/${photographer.portrait}`;

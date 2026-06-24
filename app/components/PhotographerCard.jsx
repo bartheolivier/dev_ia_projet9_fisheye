@@ -46,7 +46,10 @@ export default function PhotographerCard({ photographer }) {
         <h2 className="name">{photographer.name}</h2>
       </Link>
       
-      {/* Informations textuelles sémantiques secondaires */}
+      {/* 
+      Informations textuelles sémantiques secondaires 
+      Pas besoin d'Aria Label ici car le lecteur d'ecran va par defaut lire le texte contenu dans les balises paragraphes
+      */}
       <div className="info">
         <p className="location">{photographer.city}, {photographer.country}</p>
         <p className="tagline">{photographer.tagline}</p>

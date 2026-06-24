@@ -9,21 +9,35 @@ export default function ContactWidget({ photographerName }) {
   // État booléen pilotant l'affichage de la modale (false = masquée par défaut)
   const [isOpen, setIsOpen] = useState(false);
 
+  // Déclaration des états pour contrôler chaque champ
+  // Chaque saisie de l'utilisateur sera stockée en temps réel dans la mémoire de React.
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
+
   const openModal = () => setIsOpen(true);
-  const closeModal = () => setIsOpen(false);
+  
+  // À la fermeture, on réinitialise proprement les champs 
+  // pour que le formulaire soit entièrement vide et propre lors de la prochaine ouverture.
+  const closeModal = () => {
+    setIsOpen(false);
+    setFirstName("");
+    setLastName("");
+    setEmail("");
+    setMessage("");
+  };
 
   // Soumission du formulaire exigée par les spécifications
   const handleSubmit = (e) => {
-    e.preventDefault(); // Bloque le rechargement brutal de la page web
+    e.preventDefault(); // Bloque le rechargement de la page web (comportement par defaut du navigateur)
     
-    // L'examinateur ira vérifier cette zone dans sa console de développement !
     // Extraction et log des valeurs dans la console, conformément au cahier des charges.
-    const fields = e.target.elements;
-    console.log("=== FORMULAIRE DE CONTACT FISEYE ===");
-    console.log("Prénom :", fields['first-name'].value);
-    console.log("Nom :", fields['last-name'].value);
-    console.log("Email :", fields['email'].value);
-    console.log("Message :", fields['message'].value);
+    console.log("=== FORMULAIRE DE CONTACT ===");
+    console.log("Prénom :", firstName);
+    console.log("Nom :", lastName);
+    console.log("Email :", email);
+    console.log("Message :", message);
     
     closeModal(); // Fermeture automatique après envoi réussi
   };
@@ -78,25 +92,53 @@ export default function ContactWidget({ photographerName }) {
               {/* Prénom (Repères 3 & 4) */}
               <div className="form-group">
                 <label htmlFor="first-name">Prénom</label>
-                <input type="text" id="first-name" required />
+                {/* SOUTENANCE (Approche Scolaire - Étape 2) : Input Contrôlé par React
+                    - value : l'input affiche en permanence la valeur de notre état.
+                    - onChange : à chaque touche pressée, on met à jour l'état avec la valeur tapée (e.target.value).
+                */}
+                <input 
+                  type="text" 
+                  id="first-name" 
+                  required 
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                />
               </div>
 
               {/* Nom (Repères 5 & 6) */}
               <div className="form-group">
                 <label htmlFor="last-name">Nom</label>
-                <input type="text" id="last-name" required />
+                <input 
+                  type="text" 
+                  id="last-name" 
+                  required 
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                />
               </div>
 
               {/* Email (Repères 7 & 8) */}
               <div className="form-group">
                 <label htmlFor="email">Email</label>
-                <input type="email" id="email" required />
+                <input 
+                  type="email" 
+                  id="email" 
+                  required 
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
               </div>
 
               {/* Message (Repères 9 & 10) */}
               <div className="form-group">
                 <label htmlFor="message">Votre message</label>
-                <textarea id="message" rows="4" required></textarea>
+                <textarea 
+                  id="message" 
+                  rows="4" 
+                  required
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                ></textarea>
               </div>
 
               {/* Bouton d'envoi (Repère 11) */}

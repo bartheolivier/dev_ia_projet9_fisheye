@@ -1,5 +1,5 @@
 // app/components/MediaGallery.jsx
-// C'est le composant central de la page détail photographe. 
+// C'est le composant central de la page détail photographe. Il gere la galerie des oeuvres du photographe
 // C'est un Client Component car il pilote toute l'interactivité (tri, likes en direct, ouverture de la Lightbox).
 // Remarques:
 // La vignette de la photo (MediaCard) et le grand carrousel (Lightbox) sont des composants frères: ils ne peuvent pas se parler directement
@@ -19,7 +19,7 @@ export default function MediaGallery({ medias: initialMedias, photographerName, 
      1. GESTION DES ÉTATS (STATES)
      ========================================== */
   // La mémoire:
-  // Au sommet du composant, on installe 4 variables d'état (useState): 4 registres de mémoire de la "tour de controle"
+  // Au sommet du composant, on installe 4 variables d'état (useState): 4 registres de mémoire
   // On initialise notre état local avec les médias reçus du serveur
   // La liste de toutes les photos/vidéos. Utile pour pouvoir augmenter ou diminuer les compteurs de likes.
   const [medias, setMedias] = useState(initialMedias);
@@ -36,6 +36,8 @@ export default function MediaGallery({ medias: initialMedias, photographerName, 
 
   /* ==========================================
      2. ALGORITHME DE TRI (A LA VOLÉE)
+     La galerie est ordonnée à chaque rendu du composant. L'ajout d'un like peut modifié l'ordre mais comme la galerie est triée
+     systematiquement avec ce calcul à la volée, cela sera pris en compte automatiquement
      ========================================== */
   /*
   Pour trier les médias, on crée d'abord une copie du tableau pour ne pas modifier les données d'origine de React.
