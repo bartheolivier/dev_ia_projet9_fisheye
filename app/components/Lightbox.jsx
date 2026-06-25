@@ -9,7 +9,7 @@ import Image from 'next/image';
 
 // RECEPTION DES PROPS : Le parent 'MediaGallery' fournit l'objet média actif à afficher 
 // ainsi que les "télécommandes" (fonctions de rappel) pour modifier l'état central.
-export default function Lightbox({ media, photographerName, onClose, onPrev, onNext }) {
+export default function Lightbox({ media, onClose, onPrev, onNext }) {
   
   // Focus Trap - Étape 1 : Création d'une référence pour cibler la fenêtre de dialogue
   // et pouvoir lister ses éléments interactifs internes sans interférer avec le reste du site.

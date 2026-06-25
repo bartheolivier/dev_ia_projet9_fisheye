@@ -3,7 +3,7 @@
 
 import Image from 'next/image';
 
-export default function MediaCard({ media, photographerName, onSelect, isLiked, onLike }) {
+export default function MediaCard({ media, onSelect, isLiked, onLike }) {
   
   // Analyse de la BDD pour détecter s'il s'agit d'un champ image ou vidéo
   const mediaFileName = media.image || media.video;

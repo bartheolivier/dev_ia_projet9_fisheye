@@ -20,17 +20,20 @@ export default function MediaGallery({ medias: initialMedias, photographerName, 
      ========================================== */
   // La mémoire:
   // Au sommet du composant, on installe 4 variables d'état (useState): 4 registres de mémoire
-  // On initialise notre état local avec les médias reçus du serveur
-  // La liste de toutes les photos/vidéos. Utile pour pouvoir augmenter ou diminuer les compteurs de likes.
+
+  // 1/ On initialise notre état local avec les médias reçus du serveur
+  // La liste de toutes les photos/vidéos. Pour pouvoir augmenter ou diminuer les compteurs de likes.
   const [medias, setMedias] = useState(initialMedias);
-  // Tableau stockant les IDs des photos aimées par l'utilisateur (pour bloquer à un seul like par photo)
+
+  // 2/ Tableau stockant les IDs des photos aimées par l'utilisateur (pour permettre like/unlike)
   // Un carnet de notes qui liste les identifiants (id) des photos que l'utilisateur a aimées. 
-  // Ça évite qu'un utilisateur clique 50 fois sur le même cœur pour gonfler artificiellement les scores.
   const [likedMediaIds, setLikedMediaIds] = useState([]);
-  // Stocke l'index du média actuellement affiché dans la Lightbox
+
+  // 3/ Stocke l'index du média actuellement affiché dans la Lightbox
   // Si c'est null, ça veut dire que le carrousel est fermé. Si c'est 0, c'est la première photo, etc.
   const [selectedIndex, setSelectedIndex] = useState(null);
-  // Stocke le critère de tri actif ('popularity' par défaut)
+
+  // 4/ Stocke le critère de tri actif ('popularity' par défaut)
   // Un mot-clé ('popularity', 'date' ou 'title') qui se met à jour dès que l'utilisateur change le choix du menu déroulant.
   const [sortBy, setSortBy] = useState('popularity');
 
@@ -70,13 +73,13 @@ export default function MediaGallery({ medias: initialMedias, photographerName, 
   // pour calculer les index suivants/précédents, sinon les flèches afficheraient la mauvaise image !
   const nextMedia = () => {
     // L'opérateur Modulo (%) permet de créer une boucle infinie : arrivé au bout, on repart à 0.
-    // Ex avec 3 photos (longueur 3) : si on est sur la photo index 2 -> (2 + 1) % 3 = reste 0 -> Retour au début !
+    // Ex avec 3 photos (longueur 3) : si on est sur la photo index 2 -> (2 + 1) % 3 = reste 0 -> Retour au début 
     setSelectedIndex((prev) => (prev + 1) % sortedMedias.length);
   };
 
   const prevMedia = () => {
     // On ajoute 'sortedMedias.length' avant le modulo pour éviter de tomber sur un index négatif
-    // Ex : si on est à l'index 0 -> (0 - 1 + 3) % 3 = 2 % 3 = reste 2 -> On bascule bien sur la dernière photo !
+    // Ex : si on est à l'index 0 -> (0 - 1 + 3) % 3 = 2 % 3 = reste 2 -> On bascule bien sur la dernière photo 
     setSelectedIndex((prev) => (prev - 1 + sortedMedias.length) % sortedMedias.length);
   };
 
@@ -168,9 +171,6 @@ export default function MediaGallery({ medias: initialMedias, photographerName, 
             // DONNÉES : Transmission de l'objet média complet (titre, source, compteur de likes) 
             media={media} 
   
-            // LOGIQUE MÉTIER : Passage du nom du photographe pour reconstruire dynamiquement le chemin des fichiers multimédias 
-            photographerName={photographerName}
-  
             // INTERACTIVITÉ / CALLBACK : Fonction de rappel pour transmettre l'index de la photo cliquée au parent et ouvrir la Lightbox
             onSelect={() => openLightbox(index)} 
   
@@ -189,7 +189,6 @@ export default function MediaGallery({ medias: initialMedias, photographerName, 
         <Lightbox 
           // On passe uniquement le média actif extrait du tableau trié en fonction de l'index mémorisé
           media={sortedMedias[selectedIndex]} 
-          photographerName={photographerName}
           
           // FONCTIONS DE RAPPEL (CALLBACKS) : On transmet les télécommandes à la Lightbox pour qu'elle puisse modifier l'état du parent au clic/clavier
           onClose={closeLightbox} // Éteint l'interrupteur en remettant l'index à null
