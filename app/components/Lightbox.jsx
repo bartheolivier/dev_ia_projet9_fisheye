@@ -69,7 +69,7 @@ export default function Lightbox({ media, onClose, onPrev, onNext }) {
     // Gestion des fuites de mémoire / Anti-Memory Leak :
     // La fonction retournée est la fonction de nettoyage (cleanup). Elle s'exécute AUTOMATIQUEMENT
     // lorsque le composant est démonté (fermé). Si on omettait ce 'removeEventListener', l'écouteur 
-    // resterait actif en tâche de fond sur le navigateur, créant des bugs majeurs et ralentissant le site[cite: 194].
+    // resterait actif en tâche de fond sur le navigateur, créant des bugs majeurs et ralentissant le site.
     return () => window.removeEventListener('keydown', handleKeyDown);
 
     // TABLEAU DE DÉPENDANCES : React ré-attache proprement l'écouteur si l'une de ces fonctions de rappel 
@@ -145,7 +145,7 @@ export default function Lightbox({ media, onClose, onPrev, onNext }) {
 
         {/* CONTROLES DE DROITE : Superposition ordonnée en CSS pour regrouper la fermeture et la progression */}
         <div className="lightbox-right-controls">
-          {/* ACCESSIBILITÉ (Repère 6) : Bouton de fermeture doté de sa description accessible [cite: 68] */}
+          {/* ACCESSIBILITÉ (Repère 6) : Bouton de fermeture doté de sa description accessible */}
           <button className="lightbox-close" aria-label="Close dialog" onClick={onClose}>
             ×
           </button>
