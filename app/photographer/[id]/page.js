@@ -8,6 +8,7 @@
 // Les indicateurs de performance (Core Web Vitals) sont optimisés en appliquant l'attribut priority sur le portrait d'identité. 
 // Cela force le préchargement de la ressource détectée comme l'élément LCP principal de la zone supérieure de flottaison.
 
+import { notFound } from 'next/navigation'; // Importation de la fonction de redirection 404
 import { getPhotographer, getAllMediasForPhotographer } from '../../lib/prisma-db';
 import Header from '../../components/Header';
 import Image from 'next/image'; // Importation du composant Image optimisé pour les performances LCP
@@ -29,6 +30,13 @@ export default async function PhotographerPage({ params }) {
      ========================================================================= */
   // On lance deux requêtes asynchrones parallèles à notre base de données SQLite.
   const photographer = await getPhotographer(id); // on recupere toutes les infos du photographe selectionné
+  
+  // GESTION D'ERREUR (404) : Si l'ID saisi dans l'URL ne correspond à aucun photographe en BDD,
+  // on interrompt le rendu et on affiche automatiquement le fichier not-found.js
+  if (!photographer) {
+    notFound();
+  }
+
   const medias = await getAllMediasForPhotographer(id); // on recupere les photos et videos du photographe selectionné
 
   // Construction dynamique du chemin de l'image d'identité

@@ -583,3 +583,22 @@ a {
   cursor: pointer;
   margin-top: -10px;
 }
+
+/* --- FEEDBACK PAGES (Loading, Error, Not Found) --- */
+.feedback-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+  text-align: center;
+}
+.feedback-page h2 {
+  color: var(--primary-color);
+  font-size: 40px;
+  margin-bottom: 20px;
+}
+.feedback-page p {
+  color: var(--text-light);
+  font-size: 1.5rem;
+}
