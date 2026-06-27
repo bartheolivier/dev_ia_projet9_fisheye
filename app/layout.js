@@ -40,9 +40,11 @@ export default function RootLayout({ children }) {
        activer instantanément la bonne synthèse vocale (accent français). Si on laisse "en", le logiciel 
        essaiera de lire les textes français avec un accent anglais, rendant le site incompréhensible.
     */
-    <html lang="fr" className={`${geistSans.variable} ${geistMono.variable}`}>
+    <html lang="fr">
       {/* C'est ici que s'injecte le corps de nos pages dynamiques */}
-      <body>{children}</body>
+      <body className={`${geistSans.variable} ${geistMono.variable}`}>
+        {children}
+      </body>
     </html>
   );
 }
